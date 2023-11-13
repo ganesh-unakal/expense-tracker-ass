@@ -3,8 +3,6 @@ const signIn = document.getElementById("signIn");
 const container = document.getElementById("container");
 const signUpBtn = document.getElementById("signUpBtn");
 const loginBtn = document.getElementById("loginBtn");
-const loginEmail = document.getElementById("loginEmail");
-const loginPassword = document.getElementById("loginPassword");
 
 signUp.addEventListener("click", () => {
   container.classList.add("right-panel-active");
@@ -36,3 +34,22 @@ console.log(obj)
     })
 }
 signUpBtn.addEventListener('click',signupsss)
+
+function loginHandler(event) {
+    event.preventDefault();
+
+    const loginEmail = document.getElementById("loginEmail").value;
+    const loginPassword = document.getElementById("loginPassword").value;
+
+    console.log(loginEmail,loginPassword)
+    
+    if(loginEmail && loginPassword){
+        localStorage.setItem('loginInfo', JSON.stringify({ email : loginEmail, password: loginPassword}))
+        alert('Login successfully');
+    }else{
+        alert('please enter valid login credentials')
+    }
+
+}
+
+loginBtn.addEventListener('click',loginHandler)

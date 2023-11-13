@@ -1,5 +1,14 @@
 const User = require('../models/user');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const path = require('path');
+
+// function generateAccessToken(id, email) {
+//     return jwt.sign({ userId: id, email: email }, process.env.TOKEN);
+//   }
+
+exports.getLoginPage = (req,res) => {
+    response.sendFile(path.join(__dirname,'../','public','views','login.html'))
+}
 
 exports.postUserSignUp = async(req,res) => {
     console.log(req.body)
@@ -23,9 +32,7 @@ exports.postUserSignUp = async(req,res) => {
                 });
             });
             res.status(200)
-            .send(
-                `<script>alret('User Created Successfully!'); window.loaction.href='/'</script>`
-            );
+                .send(`<script>alert('User created Successfully')</script>`);
         }
     }).catch((err) => console.log(err));
     } catch (error) {
@@ -33,36 +40,41 @@ exports.postUserSignUp = async(req,res) => {
     }
 };
 
-exports.postUserLogin = (req, res, next) => {
-    const email = req.body.loginEmail;
-    const password = req.body.loginPassword;
+exports.postUserLogin = async (req, res, next) => {
+    console.log(req.body)
+    try {
+      const email = req.body.loginEmail;
+      const password = req.body.loginPassword;
   
-    User.findOne({ where: { email: email } }).then((user) => {
-      if (user) {
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) {
-            return res
-              .status(500)
-              .json({ success: false, message: "Something went Wrong!" });
-          }
-          if (result == true) {
-            return res.status(200).json({
-              success: true,
-              message: "Login Successful!",
-              token: generateAccessToken(user.id, user.email),
-            });
-          } else {
-            return res.status(401).json({
-              success: false,
-              message: "Password Incorrect!",
-            });
-          }
-        });
-      } else {
-        return res.status(404).json({
-          success: false,
-          message: "User doesn't Exists!",
-        });
-      }
-    });
+      await User.findOne({ where: { email: email } }).then((user) => {
+        if (user) {
+          bcrypt.compare(password, user.password, (err, result) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ success: false, message: "Something went Wrong!" });
+            }
+            if (result == true) {
+              return res.status(200).json({
+                success: true,
+                message: "Login Successful!",
+                // token: generateAccessToken(user.id, user.email),
+              });
+            } else {
+              return res.status(401).json({
+                success: false,
+                message: "Password Incorrect!",
+              });
+            }
+          });
+        } else {
+          return res.status(404).json({
+            success: false,
+            message: "User doesn't Exists!",
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
