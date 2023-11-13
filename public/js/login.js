@@ -3,53 +3,61 @@ const signIn = document.getElementById("signIn");
 const container = document.getElementById("container");
 const signUpBtn = document.getElementById("signUpBtn");
 const loginBtn = document.getElementById("loginBtn");
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+const email = document.getElementById('email');
+const name = document.getElementById('name');
+const password = document.getElementById('password');
+
 
 signUp.addEventListener("click", () => {
-  container.classList.add("right-panel-active");
+    container.classList.add("right-panel-active");
 });
 
 signIn.addEventListener("click", () => {
-  container.classList.remove("right-panel-active");
+    container.classList.remove("right-panel-active");
 });
 
-function signupsss(event){
- event.preventDefault()
- const email = document.getElementById('email').value;
-const name = document.getElementById('name').value;
-const password = document.getElementById('password').value;
-
-const obj = {
-    name,
-    email,
-    password
-}
-console.log(obj)
-
-    axios
-    .post('http://localhost:3000/signup', obj)
-    .then((response)=>{
-        console.log(response)
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-signUpBtn.addEventListener('click',signupsss)
-
-function loginHandler(event) {
-    event.preventDefault();
-
-    const loginEmail = document.getElementById("loginEmail").value;
-    const loginPassword = document.getElementById("loginPassword").value;
-
-    console.log(loginEmail,loginPassword)
-    
-    if(loginEmail && loginPassword){
-        localStorage.setItem('loginInfo', JSON.stringify({ email : loginEmail, password: loginPassword}))
-        alert('Login successfully');
-    }else{
-        alert('please enter valid login credentials')
+async function signupsss(event) {
+    event.preventDefault()
+    try {
+        if (name.value && email.value && password.value) {
+            const reposne = await axios
+                .post('http://localhost:3000/signup', {
+                    'name': name.value,
+                    'email': email.value,
+                    'password': password.value
+                })
+            console.log(reposne);
+        } else {
+            alert('please fill in all fields');
+        }
+    } catch (error) {
+        alert('user already exists');
     }
 
 }
+signUpBtn.addEventListener('click', signupsss)
 
-loginBtn.addEventListener('click',loginHandler)
+
+async function loginHandler(event) {
+    event.preventDefault();
+
+    if (loginEmail && loginPassword) {
+        if (loginEmail.value && loginPassword.value) {
+            try {
+                const response = await axios.post('http://localhost:3000/login', { 'email': loginEmail.value, 'password': loginPassword.value });
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+                alert('Invalid Email or Password');
+                console.log(error.response.data.error);
+                alert(error.response.data.error);
+            }
+        } else {
+            alert('Enter All the Fields')
+        }
+    }
+}
+
+loginBtn.addEventListener('click', loginHandler)

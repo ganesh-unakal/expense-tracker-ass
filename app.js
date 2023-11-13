@@ -13,12 +13,12 @@ app.use(express.json())
 app.use(authRouter)
 
 sequelize
-.sync()
-.then(result => {
-    app.listen(port,() => {
-        console.log(`server is runnning on ${port}`)
+    .sync()
+    .then(result => {
+        app.listen(port, () => {
+            console.log(`server is runnning on ${port}`)
+        })
+    }).catch(err => {
+        console.log(err)
     })
-}).catch(err => {
-    console.log(err)
-})
 
