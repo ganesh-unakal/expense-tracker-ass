@@ -29,11 +29,13 @@ async function signupsss(event) {
                     'password': password.value
                 })
             console.log(reposne);
+            console.log(reposne.data);
+            alert('User signed up sucessfully')
         } else {
             alert('please fill in all fields');
         }
     } catch (error) {
-        alert('user already exists');
+        alert('user already exists',error.reposne.data.error);
     }
 
 }

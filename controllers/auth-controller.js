@@ -1,5 +1,5 @@
 const User = require('../models/user');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const path = require('path');
 
 exports.getLoginPage = (req, res) => {
@@ -20,10 +20,11 @@ exports.postUserSignUp = async (req, res) => {
                 user: user
             })
         }
+        const hashedPassword = await bcrypt.hash(password,10)
         const newUser = await User.create({
             name: name,
             email: email,
-            password: password,
+            password: hashedPassword,
         });
 
         res.status(200).json({
@@ -46,17 +47,19 @@ exports.postUserLogin = async (req, res, next) => {
         console.log(email, password)
         const user = await User.findOne({ where: { email: email } })
         if (!user) {
-            return res.status(405).json({
+            return res.status(404).json({
                 error: 'User does not exist'
             })
         }
-        if (user.password !== password) {
-            return res.status(406).json({
-                error: 'User not authorized'
+        
+        const validPassword = await bcrypt.compare(password,user.password)
+        if (!validPassword) {
+            return res.status(401).json({
+                error: 'Inavlid password'
             });
         }
 
-        res.status(201).json({
+        res.status(200).json({
             message: "Login successful",
             user: user
         });
