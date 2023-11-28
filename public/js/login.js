@@ -50,6 +50,8 @@ async function loginHandler(event) {
             try {
                 const response = await axios.post('http://localhost:3000/login', { 'email': loginEmail.value, 'password': loginPassword.value });
                 console.log(response);
+                alert(response.data.message)
+                window.location.href='./expense.html'
             } catch (error) {
                 console.log(error);
                 alert('Invalid Email or Password');

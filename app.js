@@ -8,9 +8,11 @@ const app = express()
 app.use(cors());
 
 const authRouter = require('./routes/authRoutes')
+const expenseRoutes = require('./routes/expenseRoutes')
 
-app.use(express.json())
-app.use(authRouter)
+app.use(express.json());
+app.use(authRouter);
+app.use(expenseRoutes);
 
 sequelize
     .sync()
